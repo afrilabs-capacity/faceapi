@@ -22,6 +22,7 @@ import Auth from "./layouts/Auth.vue";
 import Dashboard from "./views/admin/Dashboard.vue";
 import Settings from "./views/admin/Settings.vue";
 import Tables from "./views/admin/Tables.vue";
+import WebsiteUsers from "./views/admin/WebsiteUsers.vue";
 import Maps from "./views/admin/Maps.vue";
 
 // views for Auth layout
@@ -54,6 +55,10 @@ const routes = [
       {
         path: "/admin/websites",
         component: Tables,
+      },
+      {
+        path: "/admin/websites-users",
+        component: WebsiteUsers,
       },
       {
         path: "/admin/maps",

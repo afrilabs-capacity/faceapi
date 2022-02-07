@@ -26,4 +26,7 @@ Route::middleware('auth')->group(function(){
         Route::post('/create-website', [\App\Http\Controllers\WebsiteController::class, 'create']);
         Route::get('/user', [\App\Http\Controllers\UserController::class, 'index']);
         Route::get('/load-websites', [\App\Http\Controllers\WebsiteController::class, 'index']);
+        Route::get('/load-websites-users', [\App\Http\Controllers\WebsiteUserController::class, 'index']);
+        Route::delete('/websites-users/{uuid}', [\App\Http\Controllers\WebsiteUserController::class, 'destroy']);
+        Route::delete('/websites/{uuid}', [\App\Http\Controllers\WebsiteController::class, 'destroy']);
     });

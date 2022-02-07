@@ -14,6 +14,14 @@ class WebsiteController extends \App\Http\Controllers\Controller
 
     public function index(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
+        if ($request->keyword) {
+            $array = explode(" ", $request->keyword);
+
+            $websites = websites::where('unique_id', 'like', '%'.$array[0].'%')
+                ->orWhere('name', 'like', '%'.$array[0].'%');
+            return WebsitesResource::collection($websites->paginate());
+
+        }
         $websites = websites::paginate();
         return WebsitesResource::collection($websites);
     }
@@ -31,7 +39,7 @@ class WebsiteController extends \App\Http\Controllers\Controller
 
     public function destroy(Request $request)
     {
-        $website = websites::where('unique_id', $request->unique_id)->first();
+        $website = websites::where('unique_id', $request->uuid)->first();
         $website->delete();
         return response()->json(['success' => true]);
     }

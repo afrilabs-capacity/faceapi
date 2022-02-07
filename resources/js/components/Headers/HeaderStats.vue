@@ -20,6 +20,7 @@
           </div>
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
             <card-stats
+            @click="moveToUsers()"
               statSubtitle="WEBSITE USERS"
               :statTitle="website_user"
               statArrow="down"
@@ -62,6 +63,9 @@ export default {
     methods:{
         moveToTables(){
           this.$router.push("/admin/websites")
+        },
+           moveToUsers(){
+          this.$router.push("/admin/websites-users")
         },
       getStats(){
           this.isLoading = true

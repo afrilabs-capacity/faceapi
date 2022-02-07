@@ -43,14 +43,14 @@ class VerificationController extends \App\Http\Controllers\Controller
             } else {
                 $check = WebsiteUsers::create([
                             'unique_id' => Uuid::uuid4()->toString(),
-                            'website_id' => $website->id,
+                            'websites_id' => $website->id,
                             'status' => 'verified',
                             'storage' => $second
                         ]);
             }
 
             return response()->json(['success' => true, 'message' => 'user verified', 'user' => [
-                'unique_id' => $check->id,
+                'unique_id' => $check->unique_id,
                 'status'   => $check->status
             ]]);
         }
@@ -86,7 +86,7 @@ class VerificationController extends \App\Http\Controllers\Controller
     private function _runScript($first, $second)
     {
         $command = env('STORAGE_PATH')."/test.py";
-        Log::info($command);
+        Log::info($first);
         return exec("python3 ${command} ${first} ${second}");
     }
 

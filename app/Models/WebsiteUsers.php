@@ -13,6 +13,6 @@ class WebsiteUsers extends Model
 
     public function website(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(websites::class);
+        return $this->belongsTo(websites::class, 'websites_id', 'id');
     }
 }

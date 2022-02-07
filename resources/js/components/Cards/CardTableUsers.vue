@@ -36,11 +36,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, index) in list" :key="item">
+          <tr v-for="(item, index) in list" :key="index">
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
             >
-              {{item.name}}
+              {{item.website.name}}
             </td>
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
@@ -51,16 +51,16 @@
             <td
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
             >
-              {{item.user_count}}
+              {{item.status}}
             </td>
-
             <td
-              class="bborder-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
+              class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
             >
-                <button @click="performDelete(item)" class="bg-red-500 text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded">
+              <button @click="performDelete(item)" class="bg-red-500 text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded">
                   Delete
                 </button>
             </td>
+
           </tr>
         </tbody>
       </table>
