@@ -35,8 +35,15 @@ class WebsiteUserController extends \App\Http\Controllers\Controller
     public function destroy(Request $request)
     {
         $website_user = WebsiteUsers::where('unique_id', $request->uuid)->first();
+        $this->_deleteImages($website_user->storage);
         $website_user->delete();
         return response()->json(['success' => true]);
+    }
+
+    private function _deleteImages($image) {
+        try {
+            unlink($image);
+        } catch(\Exception $e) {}
     }
 
 

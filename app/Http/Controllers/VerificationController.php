@@ -29,10 +29,13 @@ class VerificationController extends \App\Http\Controllers\Controller
         }
 
         $website = $this->_checkIfUserExistsAndVerified($request->user_id, $request->website_id);
+        $res = $this->checkIfUserImageAlreadyExists($request->user_image, $website);
+        if ($res[0] === true) {
+            return response()->json(['success' => true, 'message' => 'user already exists', 'unique_id' => $res['1']->unique_id]);
+        }
         $first = $this->_base64ToImage($request->photo_image, ImageIDPath.'_'.time().'.png');
         $second = $this->_base64ToImage($request->user_image, UserImagePath.'_'.time().'.png');
         $check = $this->_runScript($first, $second);
-        Log::info($check);
         if (ceil($check) > 60) {
             $check = WebsiteUsers::where('unique_id', $request->user_id)->where('websites_id', $website->id)->first();
             if ($check) {
@@ -86,7 +89,6 @@ class VerificationController extends \App\Http\Controllers\Controller
     private function _runScript($first, $second)
     {
         $command = env('STORAGE_PATH')."/test.py";
-        Log::info($first);
         return exec("python3 ${command} ${first} ${second}");
     }
 
@@ -111,6 +113,43 @@ class VerificationController extends \App\Http\Controllers\Controller
             'photo_image'      => 'required',
             'website_id'      => 'required'
         ]);
+    }
+
+    private function _deleteImages($image) {
+        try {
+            unlink($image);
+        } catch(\Exception $e) {}
+    }
+
+    public function checkIfUserImageAlreadyExists($image, $website): array
+    {
+        $second = $this->_base64ToImage($image, UserImagePath.'_'.time().'.png');
+        $users = WebsiteUsers::where('websites_id', $website->id)->get();
+        $check = 0;
+        $checkedUser = null;
+        if (count($users) > 0) {
+            foreach ($users as $usr) {
+                $check = $this->_runScript($usr->storage, $second);
+                if (ceil($check) > 60) {
+                    $checkedUser = $usr;
+                    $this->_deleteImages($second);
+                    break;
+                }
+            }
+        }
+
+        if (ceil($check) > 60) {
+            Log::info("check ".$check);
+            return [
+                true,
+                $checkedUser
+            ];
+        }
+        return [
+            false
+        ];
+
+
     }
 
 

@@ -19,10 +19,10 @@ class WebsiteController extends \App\Http\Controllers\Controller
 
             $websites = websites::where('unique_id', 'like', '%'.$array[0].'%')
                 ->orWhere('name', 'like', '%'.$array[0].'%');
-            return WebsitesResource::collection($websites->paginate());
+            return WebsitesResource::collection($websites->latest()->paginate());
 
         }
-        $websites = websites::paginate();
+        $websites = websites::latest()->paginate();
         return WebsitesResource::collection($websites);
     }
 
@@ -40,8 +40,21 @@ class WebsiteController extends \App\Http\Controllers\Controller
     public function destroy(Request $request)
     {
         $website = websites::where('unique_id', $request->uuid)->first();
+        $users = $website->websiteUsers;
+        if (count($users) > 0) {
+            foreach ($users as $user) {
+                $this->_deleteImages($user->storage);
+                $user->delete();
+            }
+        }
         $website->delete();
         return response()->json(['success' => true]);
+    }
+
+    private function _deleteImages($image) {
+        try {
+            unlink($image);
+        } catch(\Exception $e) {}
     }
 
     public function update(Request $request)
