@@ -88,7 +88,8 @@ class VerificationController extends \App\Http\Controllers\Controller
 
     private function _runScript($first, $second)
     {
-        $command = env('STORAGE_PATH')."/test.py";
+        $command = "/var/www/face/test.py";
+        Log::info(exec("python3 ${command} ${first} ${second}"));
         return exec("python3 ${command} ${first} ${second}");
     }
 
