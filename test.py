@@ -13,18 +13,22 @@ import face_recognition
 
 
 hash0 = face_recognition.load_image_file(sys.argv[1])
+unknown_picture = face_recognition.load_image_file(sys.argv[2])
+
+
+
 my_face_encoding = face_recognition.face_encodings(hash0)[0]
 
 # my_face_encoding now contains a universal 'encoding' of my facial features that can be compared to any other picture of a face!
 
-unknown_picture = face_recognition.load_image_file(sys.argv[2])
 unknown_face_encoding = face_recognition.face_encodings(unknown_picture)[0]
 
 # Now we can see the two face encodings are of the same person with `compare_faces`!
 
-results = face_recognition.compare_faces([my_face_encoding], unknown_face_encoding)
+results = face_recognition.face_distance([my_face_encoding], unknown_face_encoding)
+print(results)
 
-if results[0] == True:
+if results[0] < 0.2:
     print(True)
 else:
     print(False)
