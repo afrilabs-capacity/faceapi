@@ -131,9 +131,9 @@ class VerificationController extends \App\Http\Controllers\Controller
         if (count($users) > 0) {
             foreach ($users as $usr) {
                 $check = $this->_runScript($usr->storage, $second);
+                Log::info([$usr->storage, $second]);
                 if ($check == True) {
                     $checkedUser = $usr;
-                    $this->_deleteImages($second);
                     break;
                 }
             }
