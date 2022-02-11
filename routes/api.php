@@ -20,6 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('/login', [LoginController::class, 'login'])->name('website.user.login');
+Route::get('/logout', [LoginController::class, 'logout'])->name('website.user.logout');
 
 Route::middleware('auth')->group(function(){
         Route::get('/get-stats', [\App\Http\Controllers\WebsiteController::class, 'count']);

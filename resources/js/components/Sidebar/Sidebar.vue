@@ -118,13 +118,13 @@
 
         <ul class="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">
           <li class="items-center">
-            <router-link
+            <button
               class="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
-              to="/auth/login"
+              @click="logUserOut"
             >
               <i class="fas fa-fingerprint text-blueGray-300 mr-2 text-sm"></i>
               Logout
-            </router-link>
+            </button>
           </li>
 
         </ul>
@@ -150,6 +150,14 @@ export default {
     toggleCollapseShow: function (classes) {
       this.collapseShow = classes;
     },
+      logUserOut(){
+        axios.get("/api/logout")
+                .then(res => {
+                    if(res.data.logout) {
+                        window.location = "/"
+                    }
+                })
+      }
   },
   components: {
     NotificationDropdown,

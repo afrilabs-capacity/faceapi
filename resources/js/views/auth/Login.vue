@@ -94,7 +94,7 @@ export default {
           axios.post("/api/login", data)
                 .then(res => {
                     if (res.data.success) {
-                        this.$router.push("/admin")
+                        window.location = "/dashboard/#admin"
                     }
                 })
                 .catch(err => {

@@ -16,6 +16,14 @@ use App\Http\Controllers\VerificationController;
 
 Route::get('/', function () {
     return view('index');
+})->name('login');
+
+Route::get('/#/auth/login', function () {
+    return view('index');
+})->name('login');
+
+Route::middleware('auth')->get('/dashboard', function () {
+    return view('welcome');
 });
 
 Route::post('/verify', [VerificationController::class, 'verify']);

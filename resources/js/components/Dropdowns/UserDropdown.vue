@@ -25,12 +25,12 @@
     >
 
       <div class="h-0 my-2 border border-solid border-blueGray-100" />
-      <a
-        href="javascript:void(0);"
+      <button
+        @click="logUserOut"
         class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
       >
         log out
-      </a>
+      </button>
     </div>
   </div>
 </template>
@@ -68,6 +68,15 @@ export default {
         });
       }
     },
+
+      logUserOut(){
+          axios.get("/api/logout")
+              .then(res => {
+                  if(res.data.logout) {
+                      window.location = "/"
+                  }
+              })
+      }
   },
 };
 </script>

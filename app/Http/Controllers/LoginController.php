@@ -2,6 +2,8 @@
 namespace App\Http\Controllers;
 
 
+use App\Events\UserOfflineEvent;
+use App\Models\RTAccount;
 use Illuminate\Http\Request;
 
 
@@ -20,6 +22,18 @@ class LoginController extends \App\Http\Controllers\Controller
         }
 
         return response()->json(['success' => true]);
+    }
+
+
+
+    public function logout(Request $request)
+    {
+        if (auth()->check()) {
+            $user = auth()->user();
+            auth()->logout();
+        }
+        return response()->json(['logout' => true]);
+        // return view('web.auth.login');
     }
 
 }
