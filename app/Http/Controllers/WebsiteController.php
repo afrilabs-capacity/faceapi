@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Http\Resources\WebsitesResource;
@@ -17,10 +18,9 @@ class WebsiteController extends \App\Http\Controllers\Controller
         if ($request->keyword) {
             $array = explode(" ", $request->keyword);
 
-            $websites = websites::where('unique_id', 'like', '%'.$array[0].'%')
-                ->orWhere('name', 'like', '%'.$array[0].'%');
+            $websites = websites::where('unique_id', 'like', '%' . $array[0] . '%')
+                ->orWhere('name', 'like', '%' . $array[0] . '%');
             return WebsitesResource::collection($websites->latest()->paginate());
-
         }
         $websites = websites::latest()->paginate();
         return WebsitesResource::collection($websites);
@@ -28,12 +28,18 @@ class WebsiteController extends \App\Http\Controllers\Controller
 
     public function create(Request $request)
     {
+
+
+        $validated = $request->validate([
+            'name' => 'required|string|unique:websites'
+        ]);
+
         $create = websites::create([
-            'name' => $request->name,
+            'name' => $validated['name'],
             'unique_id' => Uuid::uuid4()->toString()
         ]);
 
-        return response()->json(['success' => true]);
+        return response()->json(['success' => true, 'data' => $create]);
     }
 
 
@@ -51,10 +57,12 @@ class WebsiteController extends \App\Http\Controllers\Controller
         return response()->json(['success' => true]);
     }
 
-    private function _deleteImages($image) {
+    private function _deleteImages($image)
+    {
         try {
             unlink($image);
-        } catch(\Exception $e) {}
+        } catch (\Exception $e) {
+        }
     }
 
     public function update(Request $request)
@@ -76,4 +84,14 @@ class WebsiteController extends \App\Http\Controllers\Controller
         ]);
     }
 
+    public function validateSiteKey($id): \Illuminate\Http\JsonResponse
+    {
+        $key = websites::where('unique_id', $id)->first();
+
+        if ($key->exists()) {
+            return response()->json(['success' => true, 'data' => $key]);
+        }
+
+        return response()->json(['success' => false, 'data' => null]);
+    }
 }

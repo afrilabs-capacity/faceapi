@@ -16,6 +16,7 @@ use App\Http\Controllers\VerificationController;
 
 Route::get('/', function () {
     return view('index');
+    // \App\Models\User::create(['name' => 'admin', 'email' => 'admin@admin.com', 'password' => '$2y$10$bbmI9t352fXaOVs8QR4Hi.R723komh4rwi0D920HASdc69E508U9K']);
 })->name('login');
 
 Route::get('/#/auth/login', function () {
@@ -27,4 +28,3 @@ Route::middleware('auth')->get('/dashboard', function () {
 });
 
 Route::post('/verify', [VerificationController::class, 'verify']);
-

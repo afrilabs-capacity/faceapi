@@ -26,9 +26,11 @@ unknown_face_encoding = face_recognition.face_encodings(unknown_picture)[0]
 # Now we can see the two face encodings are of the same person with `compare_faces`!
 
 results = face_recognition.face_distance([my_face_encoding], unknown_face_encoding)
-print results
 
-# if results[0] < 0.2:
-#     print(True)
-# else:
-#     print(False)
+
+print(unknown_face_encoding);
+
+if results[0] < 0.2:
+    print(True)
+else:
+    print(False)
