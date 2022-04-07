@@ -112,6 +112,8 @@ class SubscriberController extends Controller
         } else {
             $second = $this->_base64ToImage($base64, 'user_images', UserImagePath);
         }
+
+        return [$second];
         
         $checkValidFace= $this->_runScript($second, $second);
         if (explode("\n", $checkValidFace)[1] == 'True') {
