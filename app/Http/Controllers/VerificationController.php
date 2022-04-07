@@ -14,13 +14,8 @@ define('UserImagePath', env('STORAGE_PATH') . '/app/user_images/');
 
 class VerificationController extends \App\Http\Controllers\Controller
 {
-
-
-
     public function verify(Request  $request): \Illuminate\Http\JsonResponse
     {
-
-
         $validator = $this->_validate($request);
 
         if ($validator->fails()) {
@@ -37,7 +32,7 @@ class VerificationController extends \App\Http\Controllers\Controller
         $first = $this->_base64ToImage($request->photo_image, ImageIDPath . '_' . time() . '.png');
         $second = $this->_base64ToImage($request->user_image, UserImagePath . '_' . time() . '.png');
         $check = $this->_runScript($first, $second);
-        if ($check == True) {
+        if ($check == true) {
             $check = WebsiteUsers::where('unique_id', $request->user_id)->where('websites_id', $website->id)->first();
             if ($check) {
                 $check->update([

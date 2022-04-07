@@ -40,7 +40,7 @@ Route::get('/get-stats', [\App\Http\Controllers\WebsiteController::class, 'count
 //     Route::delete('/websites/{uuid}', [\App\Http\Controllers\WebsiteController::class, 'destroy']);
 // });
 
-
+Route::get('/validate-site-key/{id}', [\App\Http\Controllers\WebsiteController::class, 'validateSiteKey']);
 Route::get('/get-stats', [\App\Http\Controllers\WebsiteController::class, 'count']);
 Route::post('/create-website', [\App\Http\Controllers\WebsiteController::class, 'create']);
 Route::get('/user', [\App\Http\Controllers\UserController::class, 'index']);
@@ -49,8 +49,9 @@ Route::get('/load-websites-users', [\App\Http\Controllers\WebsiteUserController:
 Route::delete('/websites-users/{uuid}', [\App\Http\Controllers\WebsiteUserController::class, 'destroy']);
 Route::delete('/websites/{uuid}', [\App\Http\Controllers\WebsiteController::class, 'destroy']);
 
-
-
 Route::post('/verify', [SubscriberController::class, 'verify']);
+Route::post('/verification', [\App\Http\Controllers\Api\SubscriberController::class, 'verify']);
+Route::post('/verify-no-ui', [SubscriberController::class, 'verify']);
+
 Route::get('/website/{website_id}/list/users', [\App\Http\Controllers\WebsiteUserController::class, 'getWebsiteUsersWebsiteId']);
 Route::get('/website/{website_id}/destroy/user/{user_id}', [\App\Http\Controllers\WebsiteUserController::class, 'destroyWebsiteUserWebsiteIdUserId']);

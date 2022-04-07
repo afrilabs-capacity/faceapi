@@ -8,11 +8,8 @@ use App\Models\WebsiteUsers;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Http\Request;
 
-
 class WebsiteController extends \App\Http\Controllers\Controller
 {
-
-
     public function index(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         if ($request->keyword) {
@@ -28,8 +25,6 @@ class WebsiteController extends \App\Http\Controllers\Controller
 
     public function create(Request $request)
     {
-
-
         $validated = $request->validate([
             'name' => 'required|string|unique:websites'
         ]);
@@ -88,10 +83,10 @@ class WebsiteController extends \App\Http\Controllers\Controller
     {
         $key = websites::where('unique_id', $id)->first();
 
-        if ($key->exists()) {
+        if ($key) {
             return response()->json(['success' => true, 'data' => $key]);
         }
 
-        return response()->json(['success' => false, 'data' => null]);
+        return response()->json(['success' => false, 'message'=>'Invalid Site Key',  'data' => null]);
     }
 }
