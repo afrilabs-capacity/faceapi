@@ -45,7 +45,7 @@ class SubscriberController extends Controller
     {
         $command = "/test.py";
         //return shell_exec("C:\Users\hp\AppData\Local\Programs\Python\Python36\python ${command} ${first} ${second} 2>&1");
-        return exec("python3 ${command} ${first} ${second}");
+        return exec("python3 ${command} ${first} ${second} 2>&1");
 
 
         //  2>&1
