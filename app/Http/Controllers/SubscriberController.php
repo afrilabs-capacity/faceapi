@@ -125,10 +125,8 @@ class SubscriberController extends Controller
             $second = $this->_base64ToImage($base64, 'user_images', UserImagePath);
         }
 
-        
-        
         $checkValidFace= $this->_runScript($second, $second);
-        //return [$checkValidFace];
+        return ['hi'];
 
         if ($checkValidFace == "True") {
             $this->_deleteImages($second);
