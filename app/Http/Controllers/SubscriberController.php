@@ -151,7 +151,7 @@ class SubscriberController extends Controller
             }
         
             $checkValidFace= $this->_runScript($second, $second);
-            if (explode("\n", $checkValidFace)[1] !== 'True') {
+            if ($checkValidFace == "True") {
                 $this->_deleteImages($second);
                 return response()->json(['success' => false, 'type'=>'no_face', 'message' => 'The provided image has no face in it', 'data' => null], 200);
             }
@@ -169,7 +169,7 @@ class SubscriberController extends Controller
                 $check = $this->_runScript($usr->storage, $second);
                 $resMatch =  (int) filter_var(explode("\n", $check)[0], FILTER_SANITIZE_NUMBER_INT);
                
-                if ((int) substr(ceil($resMatch), 0, 1) < 5) {
+                if ($check == "True") {
                     $checkedUser = $usr;
                     $checkMatches++;
                     //dd($check);
@@ -237,7 +237,7 @@ class SubscriberController extends Controller
         
 
             if ($check) {
-                if (explode("\n", $check)[1] !== 'True') {
+                if ($check !== "True") {
                     return response()->json(['success' => false,'type'=>'no_face', 'message' => 'The provided image has no face in it', 'data' => null], 200);
                 }
             }
@@ -251,7 +251,7 @@ class SubscriberController extends Controller
 
         //return [ $check];
         $resMatch =  (int) filter_var(explode("\n", $check)[0], FILTER_SANITIZE_NUMBER_INT);
-        if ((int) substr(ceil($resMatch), 0, 1) < 5) {
+        if ($check == "True") {
             return response()->json(['success' => true, 'message' => 'The provided image exists on your website for user: ' . $userId, 'data' => ['base64'=>request()->pdf ? $this->_imageToBase64($second) : $base64]], 200);
         } else {
             return response()->json(['success' => false, 'message' => 'The provided image does not exist on your website for user: ' . $userId,'type'=>'unsuccessful', 'data' => null], 200);
@@ -270,7 +270,7 @@ class SubscriberController extends Controller
        
         $checkValidFirst= $this->_runScript($first, $first);
 
-        if (explode("\n", $checkValidFirst)[1] !== 'True') {
+        if ($checkValidFirst !== "True") {
             $this->_deleteImages($first);
             return response()->json(['success' => false, 'type'=>'no_face_first', 'message' => 'The uploaded document has no face in it', 'data' => null], 200);
         }
@@ -278,7 +278,7 @@ class SubscriberController extends Controller
         $second = $this->_base64ToImage($base64_second, 'user_images', UserImagePath);
         $checkValidSecond= $this->_runScript($second, $second);
 
-        if (explode("\n", $checkValidSecond)[1] !== 'True') {
+        if ($checkValidSecond !== 'True') {
             $this->_deleteImages($second);
             return response()->json(['success' => false, 'type'=>'no_face_second', 'message' => 'The uploaded document has no face in it', 'data' => null], 200);
         }
