@@ -23,8 +23,7 @@ unknown_face_encoding = face_recognition.face_encodings(unknown_picture)[0]
 results = face_recognition.compare_faces([my_face_encoding], unknown_face_encoding)
 print(results)
 
-if results :
-    print(True)
-else:
-    print(False)
-    
+# if results :
+#     print(True)
+# else:
+#     print(False)
