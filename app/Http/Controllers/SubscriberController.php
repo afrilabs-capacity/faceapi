@@ -23,7 +23,7 @@ class SubscriberController extends Controller
             return response()->json(['success' => false, 'message' => 'invalid website id'], 409);
         }
 
-        if (!is_null($request->pair_activity_with)) {
+        if (!is_null($request->pair_activity_with) || $request->activity_type == 'compare') {
             return $this->_processDocumentVerification($request->base64_first, $request->base64_second);
         }
 
@@ -44,10 +44,12 @@ class SubscriberController extends Controller
     private function _runScript($first, $second)
     {
         $command = "/var/www/facetest/faceapi/test.py";
-        //return shell_exec("C:\Users\hp\AppData\Local\Programs\Python\Python36\python ${command} ${first} ${second} 2>&1");
-        return shell_exec("python3 ${command} ${first} ${second} 2>&1");
+        return shell_exec("python3 ${command} ${first} ${second}");
 
-
+        // $command = "/test.py";
+        // return shell_exec("C:\Users\hp\AppData\Local\Programs\Python\Python36\python ${command} ${first} ${second} 2>&1");
+        
+    
         //  2>&1
     }
 
@@ -68,6 +70,20 @@ class SubscriberController extends Controller
         }
     }
 
+    public function _imageToBase64($file)
+    {
+        try {
+            $imagePath = $file;
+            $extension = pathinfo($imagePath, PATHINFO_EXTENSION);
+            $data = file_get_contents($imagePath);
+            $dataEncoded = base64_encode($data);
+            $base64Str = 'data:image/' . $extension . ';base64,' . $dataEncoded;
+            return $base64Str;
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'type'=>'image_decode_error', 'message' => 'The provided image has a face in it', 'data' => null], 500);
+        }
+    }
+
 
 
     public function _base64ToImagePDF($dataUri, $dir, $path)
@@ -78,7 +94,7 @@ class SubscriberController extends Controller
             $imgstring = trim(str_replace('data:image/png;base64,', '', $imgstring));
             $imgstring = str_replace(' ', '+', $imgstring);
             $data = base64_decode($imgstring);
-            $imagick = new  Imagick();
+            $imagick = new  imagick();
             $imagick->readImageBlob($data);
             $imagick->setImageFormat("png");
             $imageBlob = $imagick->getImageBlob();
@@ -117,7 +133,7 @@ class SubscriberController extends Controller
         $checkValidFace= $this->_runScript($second, $second);
         //return [$checkValidFace];
 
-        if (explode("\n", $checkValidFace)[1] == 'True') {
+        if ($checkValidFace == "True") {
             $this->_deleteImages($second);
             return response()->json(['success' => true, 'message' => 'The provided image has a face in it', 'data' => $base64], 200);
         } else {
@@ -175,7 +191,7 @@ class SubscriberController extends Controller
                     'storage' => $second
                 ]);
 
-                    return response()->json(['success' => true, 'message' => 'The provided image does not exist on your website', 'remote_user_id' => $check->unique_id, 'data' => $base64], 200);
+                    return response()->json(['success' => true, 'message' => 'The provided image does not exist on your website', 'remote_user_id' => $check->unique_id, 'data' =>  ['base64'=>request()->pdf ? $this->_imageToBase64($second) : $base64]], 200);
                 }
 
                 return response()->json(['success' => false, 'type'=>'unsuccessful', 'message' => 'The provided image does not exist on your website', 'remote_user_id' => null, 'data' => null], 200);
@@ -188,7 +204,7 @@ class SubscriberController extends Controller
                 'status' => 'verified',
                 'storage' => $second
             ]);
-                return response()->json(['success' => true, 'message' => 'The user does not exist on your website', 'remote_user_id' => $check->unique_id, 'data' => $base64], 200);
+                return response()->json(['success' => true, 'message' => 'The user does not exist on your website', 'remote_user_id' => $check->unique_id, 'data' => ['base64'=>request()->pdf ? $this->_imageToBase64($second) : $base64]], 200);
             }
 
          
@@ -228,13 +244,15 @@ class SubscriberController extends Controller
         } else {
             $second=$base64;
         }
-
+           
 
         $user = WebsiteUsers::where('websites_id', $website->id)->where('unique_id', $userId)->first();
         $check = $this->_runScript($user->storage, $second);
+
+        //return [ $check];
         $resMatch =  (int) filter_var(explode("\n", $check)[0], FILTER_SANITIZE_NUMBER_INT);
         if ((int) substr(ceil($resMatch), 0, 1) < 5) {
-            return response()->json(['success' => true, 'message' => 'The provided image exists on your website for user: ' . $userId, 'data' => ['base64'=>$base64]], 200);
+            return response()->json(['success' => true, 'message' => 'The provided image exists on your website for user: ' . $userId, 'data' => ['base64'=>request()->pdf ? $this->_imageToBase64($second) : $base64]], 200);
         } else {
             return response()->json(['success' => false, 'message' => 'The provided image does not exist on your website for user: ' . $userId,'type'=>'unsuccessful', 'data' => null], 200);
         }
@@ -279,14 +297,11 @@ class SubscriberController extends Controller
 
                     if ($databaseCheckDecode->success) {
                         return response()->json(['success' => true, 'message' => 'The provided images are a match and '.$databaseCheckDecode->message, 'remote_user_id'=>$databaseCheckDecode->remote_user_id, 'data' => [
-                        'base64_first'=>$base64_first,
-                        'base64_second' =>$base64_second
+                        'base64_first'=>request()->pdf ? $this->_imageToBase64($first) : $base64_first,
+                         'base64_second' =>$base64_second
                     ]], 200);
                     } else {
-                        return response()->json(['success' => false, 'type'=>'unsuccessful', 'message' => 'The provided images are a match and '.$databaseCheckDecode->message, 'remote_user_id'=>null, 'data' => [
-                        'base64_first'=>$base64_first,
-                        'base64_second' =>$base64_second
-                    ]], 200);
+                        return response()->json(['success' => false, 'type'=>'unsuccessful', 'message' => 'The provided images are a match and '.$databaseCheckDecode->message, 'remote_user_id'=>null, 'data' => null], 200);
                     }
                 } elseif (request()->activity_type=='database_user') {
                     $website = websites::where('unique_id', request()->website_id)->first();
@@ -296,19 +311,19 @@ class SubscriberController extends Controller
                     if ($databaseCheckDecode->success) {
                         return response()->json(['success' => true, 'message' => 'The provided images are a match and '.$databaseCheckDecode->message,
                     'data' => [
-                        'base64_first'=>$base64_first,
-                        'base64_second' =>$base64_second
+                        'base64_first'=>request()->pdf ? $this->_imageToBase64($first) : $base64_first,
+                         'base64_second' =>$base64_second
                     ]], 200);
                     } else {
                         return response()->json(['success' => false,  'type'=>'unsuccessful', 'message' => 'The provided images are a match and '.$databaseCheckDecode->message,
-                    'data' => [
-                        'base64_first'=>$base64_first,
-                        'base64_second' =>$base64_second
-                    ]], 200);
+                    'data' => null], 200);
                     }
                 }
 
-                return response()->json(['success' => true, 'message' => 'The provided images are a match', 'data' => null], 200);
+                return response()->json(['success' => true, 'message' => 'The provided images are a match',  'data' => [
+                         'base64_first'=>request()->pdf ? $this->_imageToBase64($first) : $base64_first,
+                         'base64_second' =>$base64_second
+                    ]], 200);
             }
 
             return response()->json(['success' => false, 'type'=>'no_match', 'message' => 'The provided images do not match', 'data' => null], 200);
