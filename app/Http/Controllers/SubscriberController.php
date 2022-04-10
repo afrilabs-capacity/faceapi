@@ -274,7 +274,7 @@ class SubscriberController extends Controller
         $second = $this->_base64ToImage($base64_second, 'user_images', UserImagePath);
         $checkValidSecond= $this->_runScript($second, $second);
 
-        if (explode("\n", $checkValidSecond)[1] !== 'True') {
+        if (!$checkValidSecond && explode("\n", $checkValidSecond)[0] !== 'True') {
             $this->_deleteImages($second);
             return response()->json(['success' => false, 'type'=>'no_face_second', 'message' => 'The uploaded document has no face in it', 'data' => null], 200);
         }
