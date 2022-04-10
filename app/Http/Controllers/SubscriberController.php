@@ -267,6 +267,8 @@ class SubscriberController extends Controller
 
         // return explode("\n", $checkValidFirst)[0];
         // return [$checkValidFirst];
+
+        return $checkValidFirst !== 'True';
         
         if ($checkValidFirst !== 'True') {
             $this->_deleteImages($first);
@@ -274,6 +276,8 @@ class SubscriberController extends Controller
         }
         $second = $this->_base64ToImage($base64_second, 'user_images', UserImagePath);
         $checkValidSecond= $this->_runScript($second, $second);
+
+        //return []
 
         if ($checkValidSecond !== 'True') {
             $this->_deleteImages($second);
