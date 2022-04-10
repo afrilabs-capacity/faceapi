@@ -44,7 +44,7 @@ class SubscriberController extends Controller
     private function _runScript($first, $second)
     {
         $command = "/var/www/facetest/faceapi/test.py";
-        return exec("python3 ${command} ${first} ${second}");
+        return shell_exec("python3 ${command} ${first} ${second}");
         // $command = "/test.py";
         // return shell_exec("C:\Users\hp\AppData\Local\Programs\Python\Python36\python ${command} ${first} ${second} 2>&1");
         //  2>&1
@@ -260,21 +260,16 @@ class SubscriberController extends Controller
         } else {
             $first = $this->_base64ToImage($base64_first, 'user_images', UserImagePath);
         }
-        
-       
         $checkValidFirst= $this->_runScript($first, $first);
-
-
-        return [ $checkValidFirst];
-
         if ($checkValidFirst !== "True") {
             $this->_deleteImages($first);
             return response()->json(['success' => false, 'type'=>'no_face_first', 'message' => 'The uploaded document has no face in it', 'data' => null], 200);
         }
-
         $second = $this->_base64ToImage($base64_second, 'user_images', UserImagePath);
         $checkValidSecond= $this->_runScript($second, $second);
+        return [ $checkValidSecond];
 
+        
         if ($checkValidSecond !== 'True') {
             $this->_deleteImages($second);
             return response()->json(['success' => false, 'type'=>'no_face_second', 'message' => 'The uploaded document has no face in it', 'data' => null], 200);
@@ -282,8 +277,6 @@ class SubscriberController extends Controller
 
 
         $checkCompare= $this->_runScript($first, $second);
-
-        return [$checkCompare];
 
         $resMatch =  (int) filter_var(explode("\n", $checkCompare)[0], FILTER_SANITIZE_NUMBER_INT);
        

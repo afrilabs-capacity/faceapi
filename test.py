@@ -9,12 +9,8 @@ from PIL import Image
 import sys
 import face_recognition
 
-
-
 hash0 = face_recognition.load_image_file(sys.argv[1])
 unknown_picture = face_recognition.load_image_file(sys.argv[2])
-
-
 
 my_face_encoding = face_recognition.face_encodings(hash0)[0]
 
