@@ -264,8 +264,6 @@ class SubscriberController extends Controller
        
         $checkValidFirst= $this->_runScript($first, $first);
 
-        return [$checkValidFirst];
-
         if ($checkValidFirst !== "True") {
             $this->_deleteImages($first);
             return response()->json(['success' => false, 'type'=>'no_face_first', 'message' => 'The uploaded document has no face in it', 'data' => null], 200);
@@ -281,6 +279,9 @@ class SubscriberController extends Controller
 
 
         $checkCompare= $this->_runScript($first, $second);
+
+        return [$checkCompare];
+        
         $resMatch =  (int) filter_var(explode("\n", $checkCompare)[0], FILTER_SANITIZE_NUMBER_INT);
        
         if ($resMatch) {
