@@ -127,6 +127,9 @@ class SubscriberController extends Controller
 
         $checkValidFace= $this->_runScript($second, $second);
 
+        return [$checkValidFace];
+        
+
         if ($checkValidFace == "True") {
             $this->_deleteImages($second);
             return response()->json(['success' => true, 'message' => 'The provided image has a face in it', 'data' => $base64], 200);
@@ -261,9 +264,6 @@ class SubscriberController extends Controller
             $first = $this->_base64ToImage($base64_first, 'user_images', UserImagePath);
         }
         $checkValidFirst= $this->_runScript($first, $first);
-
-        return [$checkValidFirst];
-
         
         if ($checkValidFirst !== "True") {
             $this->_deleteImages($first);
