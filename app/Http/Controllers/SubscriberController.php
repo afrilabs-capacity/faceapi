@@ -268,7 +268,7 @@ class SubscriberController extends Controller
         // return explode("\n", $checkValidFirst)[0];
         // return [$checkValidFirst];
 
-        return $checkValidFirst[0] !== 'True';
+        return $checkValidFirst[0];
         
         if ($checkValidFirst !== 'True') {
             $this->_deleteImages($first);
