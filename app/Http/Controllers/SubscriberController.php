@@ -94,7 +94,7 @@ class SubscriberController extends Controller
             $imgstring = trim(str_replace('data:image/png;base64,', '', $imgstring));
             $imgstring = str_replace(' ', '+', $imgstring);
             $data = base64_decode($imgstring);
-            $imagick = new  \Imagick();
+            $imagick = new  Imagick();
             $imagick->readImageBlob($data);
             $imagick->setImageFormat("png");
             $imageBlob = $imagick->getImageBlob();
