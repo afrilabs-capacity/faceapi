@@ -283,6 +283,8 @@ class SubscriberController extends Controller
         $checkCompare= $this->_runScript($first, $second);
 
         $resMatch =  (int) filter_var(explode("\n", $checkCompare)[0], FILTER_SANITIZE_NUMBER_INT);
+
+        return [$resMatch];
        
         if ($resMatch) {
             if ($resMatch < 53296129) {
