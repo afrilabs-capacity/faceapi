@@ -265,10 +265,9 @@ class SubscriberController extends Controller
         }
         $checkValidFirst= $this->_runScript($first, $first);
 
-        return explode("\n", $checkValidFirst)[0];
-
+        // return explode("\n", $checkValidFirst)[0];
         
-        if (explode("\n", $checkValidFirst)[1] !== 'True') {
+        if ($checkValidFirst && explode("\n", $checkValidFirst)[0] !== 'True') {
             $this->_deleteImages($first);
             return response()->json(['success' => false, 'type'=>'no_face_first', 'message' => 'The uploaded document has no face in it', 'data' => null], 200);
         }
