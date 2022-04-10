@@ -266,16 +266,16 @@ class SubscriberController extends Controller
         $checkValidFirst= $this->_runScript($first, $first);
 
         // return explode("\n", $checkValidFirst)[0];
-        return [$checkValidFirst];
+        // return [$checkValidFirst];
         
-        if (!$checkValidFirst || explode("\n", $checkValidFirst)[0] !== 'True') {
+        if (explode("\n", $checkValidFirst)[0] !== 'True') {
             $this->_deleteImages($first);
             return response()->json(['success' => false, 'type'=>'no_face_first', 'message' => 'The uploaded document has no face in it', 'data' => null], 200);
         }
         $second = $this->_base64ToImage($base64_second, 'user_images', UserImagePath);
         $checkValidSecond= $this->_runScript($second, $second);
 
-        if (!$checkValidSecond || explode("\n", $checkValidSecond)[0] !== 'True') {
+        if (explode("\n", $checkValidSecond)[0] !== 'True') {
             $this->_deleteImages($second);
             return response()->json(['success' => false, 'type'=>'no_face_second', 'message' => 'The uploaded document has no face in it', 'data' => null], 200);
         }
