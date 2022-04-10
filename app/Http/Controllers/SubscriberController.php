@@ -44,7 +44,7 @@ class SubscriberController extends Controller
     private function _runScript($first, $second)
     {
         $command = "/var/www/facetest/faceapi/test.py";
-        return shell_exec("python3 ${command} ${first} ${second}");
+        return exec("python3 ${command} ${first} ${second}");
 
         // $command = "/test.py";
         // return shell_exec("C:\Users\hp\AppData\Local\Programs\Python\Python36\python ${command} ${first} ${second} 2>&1");
