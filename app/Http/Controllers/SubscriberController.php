@@ -44,7 +44,7 @@ class SubscriberController extends Controller
     private function _runScript($first, $second)
     {
         $command = "/var/www/facetest/faceapi/test.py";
-        return shell_exec("python3 ${command} ${first} ${second} 2>&1");
+        return exec("python3 ${command} ${first} ${second} 2>&1");
         // $command = "/test.py";
         // return shell_exec("C:\Users\hp\AppData\Local\Programs\Python\Python36\python ${command} ${first} ${second} 2>&1");
         //  2>&1
@@ -281,7 +281,7 @@ class SubscriberController extends Controller
         $checkCompare= $this->_runScript($first, $second);
 
         return [$checkCompare];
-        
+
         $resMatch =  (int) filter_var(explode("\n", $checkCompare)[0], FILTER_SANITIZE_NUMBER_INT);
        
         if ($resMatch) {
