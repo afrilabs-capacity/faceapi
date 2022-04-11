@@ -245,13 +245,13 @@ class SubscriberController extends Controller
         $user = WebsiteUsers::where('websites_id', $website->id)->where('unique_id', $userId)->first();
         $check = $this->_runScript($user->storage, $second);
 
-        return [ $check];
+        // return [ $check];
         // $resMatch =  (int) filter_var(explode("\n", $check)[0], FILTER_SANITIZE_NUMBER_INT);
 
-        if ($check == "True") {
-            return response()->json(['success' => true, 'message' => 'The provided image exists on your website for user: ' . $userId, 'data' => ['base64'=>request()->pdf ? $this->_imageToBase64($second) : $base64]], 200);
-        } else {
+        if ($check !== "True") {
             return response()->json(['success' => false, 'message' => 'The provided image does not exist on your website for user: ' . $userId,'type'=>'unsuccessful', 'data' => null], 200);
+        } else {
+            return response()->json(['success' => true, 'message' => 'The provided image exists on your website for user: ' . $userId, 'data' => ['base64'=>request()->pdf ? $this->_imageToBase64($second) : $base64]], 200);
         }
     }
 
