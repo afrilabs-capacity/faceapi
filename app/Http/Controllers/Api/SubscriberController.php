@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Imagick;
 
 define('ImageIDPath', 'storage/id_image/');
-define('UserImagePath', 'storage/user_images/');
+define('UserImagePath', 'storage/face_images/');
 
 
 class SubscriberController extends Controller
@@ -49,9 +49,10 @@ class SubscriberController extends Controller
 
     private function _runScript($first, $second)
     {
-        $command = "/test_new.py";
-        return shell_exec("C:\Users\hp\AppData\Local\Programs\Python\Python36\python ${command} ${first} ${second} 2>&1");
-
+        $command = "/var/www/facetest/faceapi/test.py";
+        return exec("python3 ${command} ${first} ${second} 2>&1");
+        // $command = "/test.py";
+        // return shell_exec("C:\Users\hp\AppData\Local\Programs\Python\Python36\python ${command} ${first} ${second} 2>&1");
         //  2>&1
     }
 
@@ -111,10 +112,10 @@ class SubscriberController extends Controller
 
     public function _processBasicVerification($base64, $website)
     {
-        $second = $this->_base64ToImage($base64, 'user_images', UserImagePath);
+        $second = $this->_base64ToImage($base64, 'face_images', UserImagePath);
         $check = $this->_runScript($second, $second);
         if ($check) {
-            if (explode("\n", $check)[1] == 'True') {
+            if ($check == 'True') {
                 return response()->json(['success' => true, 'message' => 'The provided image has a face in it', 'data' => null], 200);
             }
         } else {
@@ -125,9 +126,9 @@ class SubscriberController extends Controller
     public function _processDatabaseVerification($base64, $website, $shouldConvertImage=true, $shouldDetectFace=true)
     {
         if ($shouldConvertImage && $shouldDetectFace) {
-            $second = $this->_base64ToImage($base64, 'user_images', UserImagePath);
+            $second = $this->_base64ToImage($base64, 'face_images', UserImagePath);
             $checkValidFace= $this->_runScript($second, $second);
-            if (explode("\n", $checkValidFace)[1] !== 'True') {
+            if ($checkValidFace !== 'True') {
                 $this->_deleteImages($second);
                 return response()->json(['success' => false, 'type'=>'no_face', 'message' => 'The provided image has no face in it', 'data' => null], 200);
             }
@@ -143,9 +144,8 @@ class SubscriberController extends Controller
         if (count($users) > 0) {
             foreach ($users as $usr) {
                 $check = $this->_runScript($usr->storage, $second);
-                $resMatch =  (int) filter_var(explode("\n", $check)[0], FILTER_SANITIZE_NUMBER_INT);
-               
-                if ((int) substr(ceil($resMatch), 0, 1) < 5) {
+    
+                if ($check == "True") {
                     $checkedUser = $usr;
                     $checkMatches++;
                     //dd($check);
@@ -159,23 +159,48 @@ class SubscriberController extends Controller
             if ($checkMatches > 0) {
                 return response()->json(['success' => true, 'message' => 'The provided image exists on your website', 'remote_user_id' => $checkedUser->unique_id, 'data' => null], 200);
             } else {
-                $check = WebsiteUsers::create([
+                if (request()->create_on_fail) {
+                    $check = WebsiteUsers::create([
                     'unique_id' => Uuid::uuid4()->toString(),
                     'websites_id' => $website->id,
                     'status' => 'verified',
                     'storage' => $second
                 ]);
 
-                return response()->json(['success' => true, 'message' => 'The provided image does not exist on your website', 'remote_user_id' => $check->unique_id, 'data' => $base64], 200);
+                    return response()->json(['success' => true, 'message' => 'The provided image does not exist on your website', 'remote_user_id' => $check->unique_id, 'data' =>  null], 200);
+                }
+
+                return response()->json(['success' => false, 'type'=>'unsuccessful', 'message' => 'The provided image does not exist on your website', 'remote_user_id' => null, 'data' => null], 200);
+                // $check = WebsiteUsers::create([
+                //     'unique_id' => Uuid::uuid4()->toString(),
+                //     'websites_id' => $website->id,
+                //     'status' => 'verified',
+                //     'storage' => $second
+                // ]);
+
+                // return response()->json(['success' => true, 'message' => 'The provided image does not exist on your website', 'remote_user_id' => $check->unique_id, 'data' => $base64], 200);
             }
         } else {
-            $check = WebsiteUsers::create([
+            if (request()->create_on_fail) {
+                $check = WebsiteUsers::create([
                 'unique_id' => Uuid::uuid4()->toString(),
                 'websites_id' => $website->id,
                 'status' => 'verified',
                 'storage' => $second
             ]);
-            return response()->json(['success' => true, 'message' => 'The user does not exist on your website', 'remote_user_id' => $check->unique_id, 'data' => $base64], 200);
+                return response()->json(['success' => true, 'message' => 'The user does not exist on your website', 'remote_user_id' => $check->unique_id, 'data' => null], 200);
+            }
+
+         
+            return response()->json(['success' => false, 'type'=>'unsuccessful', 'message' => 'The provided image does not exist on your website', 'remote_user_id' => null, 'data' => null], 200);
+
+            // $check = WebsiteUsers::create([
+            //     'unique_id' => Uuid::uuid4()->toString(),
+            //     'websites_id' => $website->id,
+            //     'status' => 'verified',
+            //     'storage' => $second
+            // ]);
+            // return response()->json(['success' => true, 'message' => 'The user does not exist on your website', 'remote_user_id' => $check->unique_id, 'data' => $base64], 200);
         }
     }
 
@@ -192,7 +217,7 @@ class SubscriberController extends Controller
      
         
         if ($shouldConvertImage && $shouldDetectFace) {
-            $second = $this->_base64ToImage($base64, 'user_images', UserImagePath);
+            $second = $this->_base64ToImage($base64, 'face_images', UserImagePath);
             $check = $this->_runScript($second, $second);
 
             if ($check) {
@@ -218,7 +243,7 @@ class SubscriberController extends Controller
 
     public function _processDocumentVerification($base64_first, $base64_second)
     {
-        $first = $this->_base64ToImage($base64_first, 'user_images', UserImagePath);
+        $first = $this->_base64ToImage($base64_first, 'face_images', UserImagePath);
 
         $checkValidFirst= $this->_runScript($first, $first);
 
@@ -227,7 +252,7 @@ class SubscriberController extends Controller
             return response()->json(['success' => false, 'message' => 'base64_first has no face in it', 'data' => null], 200);
         }
 
-        $second = $this->_base64ToImage($base64_second, 'user_images', UserImagePath);
+        $second = $this->_base64ToImage($base64_second, 'face_images', UserImagePath);
         $checkValidSecond= $this->_runScript($second, $second);
 
         if (explode("\n", $checkValidSecond)[1] !== 'True') {
