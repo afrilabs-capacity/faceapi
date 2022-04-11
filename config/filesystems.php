@@ -69,6 +69,12 @@ return [
             'url' => 'user_images_compare',
         ],
 
+        'face_images' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/face_images'),
+            'url' => 'face_images',
+        ],
+
     ],
 
     /*
