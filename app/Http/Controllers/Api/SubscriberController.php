@@ -221,7 +221,7 @@ class SubscriberController extends Controller
             $check = $this->_runScript($second, $second);
 
             if ($check) {
-                if (explode("\n", $check)[1] !== 'True') {
+                if ($check !== 'True') {
                     return response()->json(['success' => false, 'message' => 'The provided image has no face in it', 'data' => null], 200);
                 }
             }
@@ -232,11 +232,11 @@ class SubscriberController extends Controller
 
         $user = WebsiteUsers::where('websites_id', $website->id)->where('unique_id', $userId)->first();
         $check = $this->_runScript($user->storage, $second);
-        $resMatch =  (int) filter_var(explode("\n", $check)[0], FILTER_SANITIZE_NUMBER_INT);
-        if ((int) substr(ceil($resMatch), 0, 1) < 5) {
-            return response()->json(['success' => true, 'message' => 'The provided image exists on your website for user: ' . $userId, 'data' => null], 200);
-        } else {
+       
+        if ($check !== "True") {
             return response()->json(['success' => false, 'message' => 'The provided image does not exist on your website for user: ' . $userId,'data' => null], 200);
+        } else {
+            return response()->json(['success' => true, 'message' => 'The provided image exists on your website for user: ' . $userId, 'data' => null], 200);
         }
     }
 
@@ -247,7 +247,7 @@ class SubscriberController extends Controller
 
         $checkValidFirst= $this->_runScript($first, $first);
 
-        if (explode("\n", $checkValidFirst)[1] !== 'True') {
+        if ($checkValidFirst !== 'True') {
             $this->_deleteImages($first);
             return response()->json(['success' => false, 'message' => 'base64_first has no face in it', 'data' => null], 200);
         }
@@ -255,18 +255,18 @@ class SubscriberController extends Controller
         $second = $this->_base64ToImage($base64_second, 'face_images', UserImagePath);
         $checkValidSecond= $this->_runScript($second, $second);
 
-        if (explode("\n", $checkValidSecond)[1] !== 'True') {
+        if ($checkValidSecond !== 'True') {
             $this->_deleteImages($second);
             return response()->json(['success' => false, 'message' => 'base64_second has no face in it', 'data' => null], 200);
         }
 
 
         $checkCompare= $this->_runScript($first, $second);
-        $resMatch =  (int) filter_var(explode("\n", $checkCompare)[0], FILTER_SANITIZE_NUMBER_INT);
+      
     
 
        
-        if ($resMatch < 53296129) {
+        if ($checkCompare =="True") {
             if (request()->activity_type=='database') {
                 $website = websites::where('unique_id', request()->website_id)->first();
                 $databaseCheck = $this->_processDatabaseVerification($second, $website, false, false);
