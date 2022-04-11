@@ -265,24 +265,16 @@ class SubscriberController extends Controller
         }
         $checkValidFirst= $this->_runScript($first, $first);
 
-        $strFirst = "True";
-        $patternFirst = "/$checkValidFirst/i";
-        $isValidFirst = preg_match($patternFirst, $strFirst);
 
-
-        if ($isValidFirst == 0) {
+        if ($checkValidFirst == "False") {
             $this->_deleteImages($first);
             return response()->json(['success' => false, 'type'=>'no_face_first', 'message' => 'The uploaded document has no face in it', 'data' => null], 200);
         }
         $second = $this->_base64ToImage($base64_second, 'user_images', UserImagePath);
         $checkValidSecond= $this->_runScript($second, $second);
 
-        $strSecond = "True";
-        $patternSecond = "/$checkValidSecond/i";
-        $isValidSecond = preg_match($patternSecond, $strSecond);
 
-
-        if ($isValidSecond == 0) {
+        if ($checkValidSecond == "False") {
             $this->_deleteImages($second);
             return response()->json(['success' => false, 'type'=>'no_face_second', 'message' => 'The uploaded document has no face in it', 'data' => null], 200);
         }
@@ -290,19 +282,11 @@ class SubscriberController extends Controller
 
         $checkCompare= $this->_runScript($first, $second);
 
-        // $resMatch =  (int) filter_var(explode("\n", $checkCompare)[0], FILTER_SANITIZE_NUMBER_INT);
-
-        // return [ $checkCompare];
-
-        return $checkCompare=="False";
-
-        $strCompare = "True";
-        $patternCompare = "/$checkCompare/i";
-        $isValidCompare = preg_match($patternCompare, $strCompare);
+    
 
        
-        if ($isValidCompare==1) {
-            if ($isValidCompare==1) {
+        if ($checkCompare=="True") {
+            if ($checkCompare=="True") {
                 if (request()->activity_type=='database') {
                     $website = websites::where('unique_id', request()->website_id)->first();
                     $databaseCheck = $this->_processDatabaseVerification($second, $website, false, false);
