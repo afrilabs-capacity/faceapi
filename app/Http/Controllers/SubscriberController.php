@@ -296,6 +296,8 @@ class SubscriberController extends Controller
 
         // return [ $checkCompare];
 
+        return $checkCompare;
+
         $strCompare = "True";
         $patternCompare = "/$checkCompare/i";
         $isValidCompare = preg_match($patternCompare, $strCompare);
