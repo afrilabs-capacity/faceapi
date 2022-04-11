@@ -279,7 +279,7 @@ class SubscriberController extends Controller
 
         $checkCompare= $this->_runScript($first, $second);
 
-    
+        return  $checkCompare;
 
        
         if ($checkCompare=="True") {
