@@ -290,12 +290,6 @@ class SubscriberController extends Controller
 
         $checkCompare= $this->_runScript($first, $second);
 
-        // $resMatch =  (int) filter_var(explode("\n", $checkCompare)[0], FILTER_SANITIZE_NUMBER_INT);
-
-        // return [ $checkCompare];
-
-        return $checkCompare;
-
         $strCompare = "True";
         $patternCompare = "/$checkCompare/i";
         $isValidCompare = preg_match($patternCompare, $strCompare);
