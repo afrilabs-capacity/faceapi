@@ -272,7 +272,7 @@ class SubscriberController extends Controller
         $isValidFirst = preg_match($patternFirst, $strFirst);
 
 
-        if ($isValidFirst == 1) {
+        if ($isValidFirst == 0) {
             $this->_deleteImages($first);
             return response()->json(['success' => false, 'type'=>'no_face_first', 'message' => 'The uploaded document has no face in it', 'data' => null], 200);
         }
@@ -284,7 +284,7 @@ class SubscriberController extends Controller
         $isValidSecond = preg_match($patternSecond, $strSecond);
 
 
-        if ($isValidSecond == 1) {
+        if ($isValidSecond == 0) {
             $this->_deleteImages($second);
             return response()->json(['success' => false, 'type'=>'no_face_second', 'message' => 'The uploaded document has no face in it', 'data' => null], 200);
         }
