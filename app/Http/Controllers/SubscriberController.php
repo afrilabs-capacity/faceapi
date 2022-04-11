@@ -294,7 +294,7 @@ class SubscriberController extends Controller
 
         // return [ $checkCompare];
 
-        return $checkCompare;
+        return $checkCompare[0];
 
         $strCompare = "True";
         $patternCompare = "/$checkCompare/i";
