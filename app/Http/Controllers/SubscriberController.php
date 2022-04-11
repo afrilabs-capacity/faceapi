@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Imagick;
 
 define('ImageIDPath', 'storage/id_image/');
-define('UserImagePath', 'storage/user_images/');
+define('UserImagePath', 'storage/face_images/');
 
 class SubscriberController extends Controller
 {
@@ -120,9 +120,9 @@ class SubscriberController extends Controller
     public function _processBasicVerification($base64, $website)
     {
         if (request()->pdf) {
-            $second = $this->_base64ToImagePDF($base64, 'user_images', UserImagePath);
+            $second = $this->_base64ToImagePDF($base64, 'face_images', UserImagePath);
         } else {
-            $second = $this->_base64ToImage($base64, 'user_images', UserImagePath);
+            $second = $this->_base64ToImage($base64, 'face_images', UserImagePath);
         }
 
         $checkValidFace= $this->_runScript($second, $second);
@@ -139,9 +139,9 @@ class SubscriberController extends Controller
     {
         if ($shouldConvertImage && $shouldDetectFace) {
             if (request()->pdf) {
-                $second = $this->_base64ToImagePDF($base64, 'user_images', UserImagePath);
+                $second = $this->_base64ToImagePDF($base64, 'face_images', UserImagePath);
             } else {
-                $second = $this->_base64ToImage($base64, 'user_images', UserImagePath);
+                $second = $this->_base64ToImage($base64, 'face_images', UserImagePath);
             }
         
             $checkValidFace= $this->_runScript($second, $second);
@@ -221,9 +221,9 @@ class SubscriberController extends Controller
         
         if ($shouldConvertImage && $shouldDetectFace) {
             if (request()->pdf) {
-                $second = $this->_base64ToImagePDF($base64, 'user_images', UserImagePath);
+                $second = $this->_base64ToImagePDF($base64, 'face_images', UserImagePath);
             } else {
-                $second = $this->_base64ToImage($base64, 'user_images', UserImagePath);
+                $second = $this->_base64ToImage($base64, 'face_images', UserImagePath);
             }
 
             $check = $this->_runScript($second, $second);
@@ -256,9 +256,9 @@ class SubscriberController extends Controller
     public function _processDocumentVerification($base64_first, $base64_second)
     {
         if (request()->pdf) {
-            $first = $this->_base64ToImagePDF($base64_first, 'user_images', UserImagePath);
+            $first = $this->_base64ToImagePDF($base64_first, 'face_images', UserImagePath);
         } else {
-            $first = $this->_base64ToImage($base64_first, 'user_images', UserImagePath);
+            $first = $this->_base64ToImage($base64_first, 'face_images', UserImagePath);
         }
         $checkValidFirst= $this->_runScript($first, $first);
 
@@ -267,7 +267,7 @@ class SubscriberController extends Controller
             $this->_deleteImages($first);
             return response()->json(['success' => false, 'type'=>'no_face_first', 'message' => 'The uploaded document has no face in it', 'data' => null], 200);
         }
-        $second = $this->_base64ToImage($base64_second, 'user_images', UserImagePath);
+        $second = $this->_base64ToImage($base64_second, 'face_images', UserImagePath);
         $checkValidSecond= $this->_runScript($second, $second);
 
 
