@@ -266,7 +266,7 @@ class SubscriberController extends Controller
         $checkValidFirst= $this->_runScript($first, $first);
 
         // return explode("\n", $checkValidFirst)[0];
-        // return [$checkValidFirst];
+        return [$checkValidFirst];
         $strFirst = "True";
         $patternFirst = "/$checkValidFirst/i";
         $isValidFirst = preg_match($patternFirst, $strFirst);
