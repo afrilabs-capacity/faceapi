@@ -271,9 +271,8 @@ class SubscriberController extends Controller
         $patternFirst = "/$checkValidFirst/i";
         $isValidFirst = preg_match($patternFirst, $strFirst);
 
-        return $isValidFirst;
 
-        if ($isValidFirst) {
+        if ($isValidFirst == 1) {
             $this->_deleteImages($first);
             return response()->json(['success' => false, 'type'=>'no_face_first', 'message' => 'The uploaded document has no face in it', 'data' => null], 200);
         }
@@ -285,7 +284,7 @@ class SubscriberController extends Controller
         $isValidSecond = preg_match($patternSecond, $strSecond);
 
 
-        if ($isValidSecond) {
+        if ($isValidSecond == 1) {
             $this->_deleteImages($second);
             return response()->json(['success' => false, 'type'=>'no_face_second', 'message' => 'The uploaded document has no face in it', 'data' => null], 200);
         }
@@ -302,8 +301,8 @@ class SubscriberController extends Controller
         $isValidCompare = preg_match($patternCompare, $strCompare);
 
        
-        if ($isValidCompare) {
-            if ($isValidCompare) {
+        if ($isValidCompare==1) {
+            if ($isValidCompare==1) {
                 if (request()->activity_type=='database') {
                     $website = websites::where('unique_id', request()->website_id)->first();
                     $databaseCheck = $this->_processDatabaseVerification($second, $website, false, false);
