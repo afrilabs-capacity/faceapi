@@ -271,6 +271,8 @@ class SubscriberController extends Controller
         $patternFirst = "/$checkValidFirst/i";
         $isValidFirst = preg_match($patternFirst, $strFirst);
 
+        return $isValidFirst;
+
         if ($isValidFirst) {
             $this->_deleteImages($first);
             return response()->json(['success' => false, 'type'=>'no_face_first', 'message' => 'The uploaded document has no face in it', 'data' => null], 200);
