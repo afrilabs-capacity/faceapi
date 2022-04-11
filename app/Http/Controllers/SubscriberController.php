@@ -145,7 +145,7 @@ class SubscriberController extends Controller
             }
         
             $checkValidFace= $this->_runScript($second, $second);
-            if ($checkValidFace == "False") {
+            if ($checkValidFace !== "True") {
                 $this->_deleteImages($second);
                 return response()->json(['success' => false, 'type'=>'no_face', 'message' => 'The provided image has no face in it', 'data' => null], 200);
             }
@@ -161,7 +161,7 @@ class SubscriberController extends Controller
         if (count($users) > 0) {
             foreach ($users as $usr) {
                 $check = $this->_runScript($usr->storage, $second);
-                $resMatch =  (int) filter_var(explode("\n", $check)[0], FILTER_SANITIZE_NUMBER_INT);
+                // $resMatch =  (int) filter_var(explode("\n", $check)[0], FILTER_SANITIZE_NUMBER_INT);
                
                 if ($check == "True") {
                     $checkedUser = $usr;
