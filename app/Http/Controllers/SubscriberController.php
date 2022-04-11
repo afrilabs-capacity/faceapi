@@ -127,7 +127,7 @@ class SubscriberController extends Controller
 
         $checkValidFace= $this->_runScript($second, $second);
 
-        if ($checkValidFace == "True") {
+        if ($checkValidFace !== "True") {
             $this->_deleteImages($second);
             return response()->json(['success' => true, 'message' => 'The provided image has a face in it', 'data' => $base64], 200);
         } else {
@@ -145,7 +145,7 @@ class SubscriberController extends Controller
             }
         
             $checkValidFace= $this->_runScript($second, $second);
-            if ($checkValidFace == "True") {
+            if ($checkValidFace == "False") {
                 $this->_deleteImages($second);
                 return response()->json(['success' => false, 'type'=>'no_face', 'message' => 'The provided image has no face in it', 'data' => null], 200);
             }
